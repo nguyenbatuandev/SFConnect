@@ -1,0 +1,45 @@
+package service
+
+import (
+	"Order_Service/internal/entity"
+	_interface "Order_Service/internal/interface"
+	"github.com/google/uuid"
+)
+
+type AdminService struct {
+	orderRepository _interface.OrderRepository
+	authService     _interface.AuthService
+	CommissionService _interface.PartnerCommissionService
+}
+
+func NewAdminService( orderRepository _interface.OrderRepository, authService _interface.AuthService ,	CommissionService _interface.PartnerCommissionService) *AdminService {
+	return &AdminService{
+		orderRepository: orderRepository,
+		authService:     authService,
+		CommissionService: CommissionService,
+	}
+}
+
+func (s *AdminService) GetAllOrders() ([]entity.Order, error) {
+	orders, err := s.orderRepository.GetAllOrders()
+	if err != nil {
+		return nil, err
+	}
+	return orders, nil
+}
+
+func (s *AdminService) GetOrderByID(orderID uuid.UUID) (*entity.Order, error) {
+	order, err := s.orderRepository.GetOrderByID(orderID)
+	if err != nil {
+		return nil, err
+	}
+	return order, nil
+}
+
+func (s *AdminService) GetCommissionByOrderItemID(orderItemID uuid.UUID) (*entity.PartnerCommissionRespone, error) {
+	commission, err := s.CommissionService.GetCommissionByOrderItemID(orderItemID)
+	if err != nil {
+		return nil, err
+	}
+	return commission, nil
+}

@@ -1,0 +1,76 @@
+# Git files
+.git
+.gitignore
+
+# Documentation
+README.md
+*.md
+docs/
+
+# Environment files (sẽ được inject qua docker-compose)
+.env*
+!.env.example
+
+# IDE và editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.vs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Log files
+*.log
+logs/
+log/
+
+# Test files và coverage
+*_test.go
+internal/test/
+coverage.out
+coverage.html
+test_results/
+
+# Build artifacts
+main
+*.exe
+*.dll
+*.so
+*.dylib
+dist/
+build/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Docker files (không cần trong container)
+Dockerfile*
+.dockerignore
+docker-compose*.yml
+
+# Go specific
+vendor/
+.mod
+.sum.backup
+
+# Database files (chỉ dành cho development)
+*.db
+*.sqlite
+*.sqlite3
+
+# SSL certificates (nếu có)
+*.pem
+*.key
+*.crt

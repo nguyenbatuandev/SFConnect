@@ -1,0 +1,178 @@
+version: '3.8'
+
+services:
+  # ==================== DATABASES ====================
+  user_db:
+    image: postgres:15-alpine
+    container_name: user_service_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: user_service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5432:5432"
+    volumes:
+      - user_postgres_data:/var/lib/postgresql/data
+      - ./User_Service/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  order_db:
+    image: postgres:15-alpine
+    container_name: order_service_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: order_service_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "@BCxyz123"
+    ports:
+      - "5431:5432"
+    volumes:
+      - order_postgres_data:/var/lib/postgresql/data
+    networks:
+      - microservices_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  product_db:
+    image: postgres:15-alpine
+    container_name: product_service_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: product_service_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "@BCxyz123"
+    ports:
+      - "5433:5432"
+    volumes:
+      - product_postgres_data:/var/lib/postgresql/data
+    networks:
+      - microservices_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ==================== CACHE ====================
+  redis:
+    image: redis:7-alpine
+    container_name: product_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - microservices_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ==================== MICROSERVICES ====================
+  user_service:
+    build:
+      context: ./User_Service
+      dockerfile: dockerfile
+    container_name: user_service_app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: user_db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: password123
+      DB_NAME: user_service
+      DB_SSLMODE: disable
+      JWT_SECRET: qwertyuiopiuytsdfghjkllkjhgfddfghjklkjhgfddfghjkkj
+      JWT_EXPIRES_IN: 24
+      SERVER_PORT: 8080
+      GIN_MODE: release
+    depends_on:
+      user_db:
+        condition: service_healthy
+    networks:
+      - microservices_network
+
+  product_service:
+    build:
+      context: ./Product_Service
+      dockerfile: Dockerfile
+    container_name: product_service_app
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    environment:
+      DB_HOST: product_db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: "@BCxyz123"
+      DB_NAME: product_service_db
+      DB_SSLMODE: disable
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ""
+      REDIS_DATABASE: 0
+      SERVER_PORT: 8082
+      GIN_MODE: release
+      JWT_SECRET: qwertyuiopiuytsdfghjkllkjhgfddfghjklkjhgfddfghjkkj
+    depends_on:
+      product_db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - microservices_network
+
+  order_service:
+    build:
+      context: ./Order_Service
+      dockerfile: Dockerfile
+    container_name: order_service_app
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    environment:
+      DB_HOST: order_db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: "@BCxyz123"
+      DB_NAME: order_service_db
+      DB_SSLMODE: disable
+      SERVER_PORT: 8083
+      GIN_MODE: release
+      JWT_SECRET: qwertyuiopiuytsdfghjkllkjhgfddfghjklkjhgfddfghjkkj
+    depends_on:
+      order_db:
+        condition: service_healthy
+    networks:
+      - microservices_network
+
+# ==================== VOLUMES ====================
+volumes:
+  user_postgres_data:
+    driver: local
+  order_postgres_data:
+    driver: local
+  product_postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+# ==================== NETWORKS ====================
+networks:
+  microservices_network:
+    driver: bridge
+    name: microservices_network
