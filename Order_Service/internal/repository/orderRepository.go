@@ -161,10 +161,7 @@ func (r *postgresRepository) GetAllOrdersByBuyerID(buyerID uuid.UUID, status str
 			if err != nil {
 				return nil, fmt.Errorf("failed to get product info for ProductID %s: %w", item.ProductID, err)
 			}
-			if product == nil {
-				return nil, fmt.Errorf("product with ID %s not found", item.ProductID)
-			}
-
+			
 			orderItemsResp = append(orderItemsResp, entity.OrderItemsRespone{
 				ID:        item.ID,
 				OrderID:   item.OrderID,

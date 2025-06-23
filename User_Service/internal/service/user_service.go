@@ -19,6 +19,11 @@ func NewUserService(userRepo _interface.UserRepository, authRepo _interface.Auth
 	}
 }
 func (s *UserService) RegisterUser(User *entity.User) error {
+	_, err := s.userRepo.GetUserByEmail(User.Email)
+	if err == nil {
+		return errors.New("invalid email")
+	}
+
 	hashedPassword, err := s.authRepo.HashPassword(User.Password)
 	if err != nil {
 		return err
