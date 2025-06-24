@@ -16,17 +16,19 @@ import (
 type PartnerService struct {
 	orderRepository _interface.OrderRepository
 	authService     _interface.AuthService
+	partnerRepository _interface.PartnerRepository
 }
 
-func NewPartnerService(orderRepository _interface.OrderRepository, authService _interface.AuthService) *PartnerService {
+func NewPartnerService(orderRepository _interface.OrderRepository, authService _interface.AuthService, partnerRepository _interface.PartnerRepository) *PartnerService {
 	return &PartnerService{
-		orderRepository: orderRepository,
-		authService:     authService,
+		orderRepository:  orderRepository,
+		authService:      authService,
+		partnerRepository: partnerRepository,
 	}
 }
 
 func (s *PartnerService) GetAllOrdersByPartnerID(partnerID uuid.UUID, status string) ([]entity.OrderItemsRespone, error) {
-	return s.orderRepository.GetAllOrdersByPartnerID(partnerID, status)
+	return s.partnerRepository.GetAllOrdersByPartnerID(partnerID, status)
 }
 
 func (s *PartnerService) UpdateOrderStatus(role entity.UserRole, orderItemID uuid.UUID) (*entity.OrderItemsRespone, error) {

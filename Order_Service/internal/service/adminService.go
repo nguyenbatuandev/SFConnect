@@ -10,18 +10,20 @@ type AdminService struct {
 	orderRepository _interface.OrderRepository
 	authService     _interface.AuthService
 	CommissionService _interface.PartnerCommissionService
+	adminRepository _interface.AdminRepository
 }
 
-func NewAdminService( orderRepository _interface.OrderRepository, authService _interface.AuthService ,	CommissionService _interface.PartnerCommissionService) *AdminService {
+func NewAdminService(orderRepository _interface.OrderRepository, authService _interface.AuthService, CommissionService _interface.PartnerCommissionService, adminRepository _interface.AdminRepository) *AdminService {
 	return &AdminService{
-		orderRepository: orderRepository,
-		authService:     authService,
+		orderRepository:  orderRepository,
+		authService:      authService,
 		CommissionService: CommissionService,
+		adminRepository:  adminRepository,
 	}
 }
 
 func (s *AdminService) GetAllOrders() ([]entity.Order, error) {
-	orders, err := s.orderRepository.GetAllOrders()
+	orders, err := s.adminRepository.GetAllOrders()
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +31,7 @@ func (s *AdminService) GetAllOrders() ([]entity.Order, error) {
 }
 
 func (s *AdminService) GetOrderByID(orderID uuid.UUID) (*entity.Order, error) {
-	order, err := s.orderRepository.GetOrderByID(orderID)
+	order, err := s.adminRepository.GetOrderByID(orderID)
 	if err != nil {
 		return nil, err
 	}

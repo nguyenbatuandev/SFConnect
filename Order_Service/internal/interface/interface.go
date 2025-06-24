@@ -29,17 +29,26 @@ type OrderServiceAdmin interface {
 }
 
 type OrderRepository interface {
-	CreateOrder(order *entity.Order) (*entity.Order, error)
-	GetOrderByID(orderID uuid.UUID) (*entity.Order, error)
-	GetAllOrdersByBuyerID(buyerID uuid.UUID, status string) ([]entity.OrderRespone, error)
-	GetAllOrdersByPartnerID(partnerID uuid.UUID, status string) ([]entity.OrderItemsRespone, error)
 	UpdateOrderStatus(orderID uuid.UUID, status string) (*entity.OrderItemsRespone, error)
-	GetAllOrders() ([]entity.Order, error)
 	CheckOwnerOrder(buyerID, orderID uuid.UUID) (bool, error)
 	GetOrderItemStatusByID(orderItemID uuid.UUID) (string, error)
 	GetOrderItemByID(orderItemID uuid.UUID) (*entity.OrderItemsRespone, error)
 	GetAllOrderByID(orderID uuid.UUID, status string) (*entity.Order, error)
 	GetBuyerIDByOrderItemID(orderItemID uuid.UUID) (uuid.UUID, error)
+}
+
+type BuyerRepository interface {
+	CreateOrder(order *entity.Order) (*entity.Order, error)
+	GetAllOrdersByBuyerID(buyerID uuid.UUID, status string) ([]entity.OrderRespone, error)
+}
+
+type PartnerRepository interface {
+	GetAllOrdersByPartnerID(partnerID uuid.UUID, status string) ([]entity.OrderItemsRespone, error)
+}
+
+type AdminRepository interface {
+	GetAllOrders() ([]entity.Order, error)
+	GetOrderByID(orderID uuid.UUID) (*entity.Order, error)
 }
 
 type PartnerCommissionRepository interface {
@@ -53,10 +62,6 @@ type PartnerCommissionService interface {
 	CreateCommission(commission *entity.PartnerCommission) (*entity.PartnerCommission, error)
 	GetCommissionByOrderItemID(orderItemID uuid.UUID) (*entity.PartnerCommissionRespone, error)
 
-}
-
-type ProductService interface {
-	GetProductByID(productID uuid.UUID) (*entity.Product, error)
 }
 
 type CallService interface {

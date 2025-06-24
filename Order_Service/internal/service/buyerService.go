@@ -15,22 +15,24 @@ type BuyerService struct {
 	authService              _interface.AuthService
 	orderRepository          _interface.OrderRepository
 	PartnerCommissionService _interface.PartnerCommissionService
+	buyerRepository          _interface.BuyerRepository
 }
 
-func NewBuyerService(authService _interface.AuthService, orderRepository _interface.OrderRepository, PartPartnerCommissionService _interface.PartnerCommissionService) *BuyerService {
+func NewBuyerService(authService _interface.AuthService, orderRepository _interface.OrderRepository, PartPartnerCommissionService _interface.PartnerCommissionService, buyerRepository _interface.BuyerRepository) *BuyerService {
 	return &BuyerService{
 		authService:              authService,
 		orderRepository:          orderRepository,
 		PartnerCommissionService: PartPartnerCommissionService,
+		buyerRepository:          buyerRepository,
 	}
 }
 
 func (s *BuyerService) CreateOrder(order *entity.Order) (*entity.Order, error) {
-	return s.orderRepository.CreateOrder(order)
+	return s.buyerRepository.CreateOrder(order)
 }
 
 func (s *BuyerService) GetAllOrdersByBuyerID(buyerID uuid.UUID, status string) ([]entity.OrderRespone, error) {
-	return s.orderRepository.GetAllOrdersByBuyerID(buyerID, status)
+	return s.buyerRepository.GetAllOrdersByBuyerID(buyerID, status)
 }
 
 func (s *BuyerService) UpdateOrderStatus(role entity.UserRole, buyerID, orderItemID uuid.UUID) (*entity.OrderItemsRespone, error) {

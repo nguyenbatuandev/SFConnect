@@ -27,12 +27,16 @@ func main() {
 
 	//repo
 	orderRepository := repository.NewOrderRepository(db, callUserService)
+	partnerRepository := repository.NewPartnerRepository(db, callUserService)
+	adminRepository := repository.NewAdminRepository(db, callUserService)
+	buyerRepository := repository.NewBuyerRepository(db, callUserService)
+	//service
 	authService := service.NewJWTauthService(cfg.JWT.SecretKey)
 	partnerCommis := repository.NewPartnerCommissionRepository(db, orderRepository)
 	partnerCommisService := service.NewPartnerCommissionService(partnerCommis)
-	buyerService := service.NewBuyerService(authService, orderRepository, partnerCommisService)
-	partnerService := service.NewPartnerService(orderRepository, authService)
-	adminService := service.NewAdminService(orderRepository, authService, partnerCommisService)
+	buyerService := service.NewBuyerService(authService, orderRepository, partnerCommisService, buyerRepository)
+	partnerService := service.NewPartnerService(orderRepository, authService, partnerRepository)
+	adminService := service.NewAdminService(orderRepository, authService, partnerCommisService, adminRepository)
 
 	buyerHandle := handle.NewBuyerHandler(authService, buyerService , callUserService)
 	partnerHandle := handle.NewPartnerHandler(authService, partnerService, partnerCommisService)
