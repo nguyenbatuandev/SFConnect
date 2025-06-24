@@ -12,15 +12,13 @@ import (
 )
 
 type BuyerService struct {
-	authService              _interface.AuthService
 	orderRepository          _interface.OrderRepository
 	PartnerCommissionService _interface.PartnerCommissionService
 	buyerRepository          _interface.BuyerRepository
 }
 
-func NewBuyerService(authService _interface.AuthService, orderRepository _interface.OrderRepository, PartPartnerCommissionService _interface.PartnerCommissionService, buyerRepository _interface.BuyerRepository) *BuyerService {
+func NewBuyerService(orderRepository _interface.OrderRepository, PartPartnerCommissionService _interface.PartnerCommissionService, buyerRepository _interface.BuyerRepository) *BuyerService {
 	return &BuyerService{
-		authService:              authService,
 		orderRepository:          orderRepository,
 		PartnerCommissionService: PartPartnerCommissionService,
 		buyerRepository:          buyerRepository,

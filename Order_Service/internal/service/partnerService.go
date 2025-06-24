@@ -15,14 +15,12 @@ import (
 
 type PartnerService struct {
 	orderRepository _interface.OrderRepository
-	authService     _interface.AuthService
 	partnerRepository _interface.PartnerRepository
 }
 
-func NewPartnerService(orderRepository _interface.OrderRepository, authService _interface.AuthService, partnerRepository _interface.PartnerRepository) *PartnerService {
+func NewPartnerService(orderRepository _interface.OrderRepository, partnerRepository _interface.PartnerRepository) *PartnerService {
 	return &PartnerService{
 		orderRepository:  orderRepository,
-		authService:      authService,
 		partnerRepository: partnerRepository,
 	}
 }

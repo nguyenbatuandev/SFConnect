@@ -11,14 +11,12 @@ import (
 )
 
 type BuyerHandler struct {
-	authService  _interface.AuthService
 	orderService _interface.OrderServiceBuyer
 	callUserService _interface.CallService
 }
 
-func NewBuyerHandler(authService _interface.AuthService, orderService _interface.OrderServiceBuyer, callUserService _interface.CallService) *BuyerHandler {
+func NewBuyerHandler(orderService _interface.OrderServiceBuyer, callUserService _interface.CallService) *BuyerHandler {
 	return &BuyerHandler{
-		authService:  authService,
 		orderService: orderService,
 		callUserService: callUserService,
 	}

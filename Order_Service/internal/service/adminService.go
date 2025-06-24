@@ -8,15 +8,13 @@ import (
 
 type AdminService struct {
 	orderRepository _interface.OrderRepository
-	authService     _interface.AuthService
 	CommissionService _interface.PartnerCommissionService
 	adminRepository _interface.AdminRepository
 }
 
-func NewAdminService(orderRepository _interface.OrderRepository, authService _interface.AuthService, CommissionService _interface.PartnerCommissionService, adminRepository _interface.AdminRepository) *AdminService {
+func NewAdminService(orderRepository _interface.OrderRepository,CommissionService _interface.PartnerCommissionService, adminRepository _interface.AdminRepository) *AdminService {
 	return &AdminService{
 		orderRepository:  orderRepository,
-		authService:      authService,
 		CommissionService: CommissionService,
 		adminRepository:  adminRepository,
 	}

@@ -10,14 +10,12 @@ import (
 )
 
 type AdminHandler struct {
-	authService  _interface.AuthService
 	orderService _interface.OrderServiceAdmin
 	CommissionService _interface.PartnerCommissionService
 }
 
-func NewAdminHandler(authService _interface.AuthService, orderService _interface.OrderServiceAdmin, 	CommissionService _interface.PartnerCommissionService) *AdminHandler {
+func NewAdminHandler(orderService _interface.OrderServiceAdmin, 	CommissionService _interface.PartnerCommissionService) *AdminHandler {
 	return &AdminHandler{
-		authService:  authService,
 		orderService: orderService,
 		CommissionService: CommissionService,
 	}

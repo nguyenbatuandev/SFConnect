@@ -9,14 +9,12 @@ import (
 )
 
 type PartnerHandler struct {
-	authService       _interface.AuthService
 	orderService      _interface.OrderServicePartner
 	partnerCommission _interface.PartnerCommissionService
 }
 
-func NewPartnerHandler(authService _interface.AuthService, orderService _interface.OrderServicePartner, partnerCommission _interface.PartnerCommissionService) *PartnerHandler {
+func NewPartnerHandler(orderService _interface.OrderServicePartner, partnerCommission _interface.PartnerCommissionService) *PartnerHandler {
 	return &PartnerHandler{
-		authService:       authService,
 		orderService:      orderService,
 		partnerCommission: partnerCommission,
 	}
