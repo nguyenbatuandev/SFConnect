@@ -2,11 +2,9 @@ package repository
 
 import (
 	"Order_Service/internal/entity"
-	"encoding/json"
+	_interface "Order_Service/internal/interface"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -15,10 +13,11 @@ import (
 
 type postgresRepository struct {
 	db *gorm.DB
+	CallService _interface.CallService
 }
 
-func NewOrderRepository(db *gorm.DB) *postgresRepository {
-	return &postgresRepository{db: db}
+func NewOrderRepository(db *gorm.DB, callService _interface.CallService) *postgresRepository {
+	return &postgresRepository{db: db, CallService: callService}
 }
 
 func (r *postgresRepository) CreateOrder(order *entity.Order) (*entity.Order, error) {
@@ -66,7 +65,7 @@ func (r *postgresRepository) CreateOrder(order *entity.Order) (*entity.Order, er
 		}
 
 		// Lấy thông tin sản phẩm từ Product Service
-		product, err := r.GetProductByID(item.ProductID)
+		product, err := r.CallService.GetProductByID(item.ProductID)
 		if err != nil {
 			tx.Error = fmt.Errorf("failed to get product info for ProductID %s: %w", item.ProductID, err)
 			return nil, tx.Error
@@ -157,7 +156,7 @@ func (r *postgresRepository) GetAllOrdersByBuyerID(buyerID uuid.UUID, status str
 			}
 
 			// Lấy product info
-			product, err := r.GetProductByID(item.ProductID)
+			product, err := r.CallService.GetProductByID(item.ProductID)
 			if err != nil {
 				return nil, fmt.Errorf("failed to get product info for ProductID %s: %w", item.ProductID, err)
 			}
@@ -201,7 +200,7 @@ func (r *postgresRepository) UpdateOrderStatus(orderItemID uuid.UUID, status str
 		return nil, err
 	}
 
-	product, err := r.GetProductByID(orderItem.ProductID)
+	product, err := r.CallService.GetProductByID(orderItem.ProductID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get product info for ProductID %s: %w", orderItem.ProductID, err)
 	}
@@ -283,7 +282,7 @@ func (r *postgresRepository) GetAllOrdersByPartnerID(partnerID uuid.UUID, status
 
 	for _, item := range items {
 		// Lấy thông tin sản phẩm
-		product, err := r.GetProductByID(item.ProductID)
+		product, err := r.CallService.GetProductByID(item.ProductID)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get product info for ProductID %s: %w", item.ProductID, err)
 		}
@@ -306,47 +305,6 @@ func (r *postgresRepository) GetAllOrdersByPartnerID(partnerID uuid.UUID, status
 	return result, nil
 }
 
-func (r *postgresRepository) GetProductByID(productID uuid.UUID) (*entity.Product, error) {
-	// Xây dựng URL
-	url := fmt.Sprintf("http://product_service:8082/api/v1/product-id/%s", productID.String())
-
-	// Tạo HTTP GET request
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, fmt.Errorf("không thể tạo HTTP request cho sản phẩm: %w", err)
-	}
-
-	// Gửi request bằng http.DefaultClient (hoặc tạo mới client tại đây)
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("lỗi khi gửi request tới product service: %w", err)
-	}
-	defer resp.Body.Close()
-
-	// Đọc response
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("lỗi khi đọc response body từ product service: %w", err)
-	}
-
-	// Kiểm tra mã trạng thái
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("product service trả về trạng thái lỗi: %d - %s", resp.StatusCode, string(body))
-	}
-
-	// Parse JSON
-	var productResp entity.ProductResponse
-	if err := json.Unmarshal(body, &productResp); err != nil {
-		return nil, fmt.Errorf("lỗi khi parse response sản phẩm: %w", err)
-	}
-
-	// Kiểm tra sản phẩm hợp lệ
-	if productResp.Data.Id == uuid.Nil {
-		return nil, fmt.Errorf("không tìm thấy sản phẩm với ID %s trong phản hồi từ service", productID)
-	}
-
-	return &productResp.Data, nil
-}
 
 func (r *postgresRepository) GetOrderItemByID(orderItemID uuid.UUID) (*entity.OrderItemsRespone, error) {
 	var orderItem entity.OrderItems
@@ -355,7 +313,7 @@ func (r *postgresRepository) GetOrderItemByID(orderItemID uuid.UUID) (*entity.Or
 	}
 
 	// Lấy thông tin sản phẩm
-	product, err := r.GetProductByID(orderItem.ProductID)
+	product, err := r.CallService.GetProductByID(orderItem.ProductID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get product info for ProductID %s: %w", orderItem.ProductID, err)
 	}

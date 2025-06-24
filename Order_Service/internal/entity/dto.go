@@ -37,3 +37,4 @@ type CreateOrderRequest struct {
 	Address    string             `json:"address" binding:"required"`
 	OrderItems []OrderItemRequest `json:"order_items" binding:"required"`
 }
+

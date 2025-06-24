@@ -71,6 +71,30 @@ func AdminOnlyMiddleware() gin.HandlerFunc {
 	}
 }
 
+	
+func BuyerOnlyMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		role, exists := c.Get("user_role")
+		if !exists {
+			c.JSON(http.StatusForbidden, entity.ErrorResponse{
+				Error: "Access denied",
+			})
+			c.Abort()
+			return
+		}
+
+		if role != entity.RoleGuest {
+			c.JSON(http.StatusForbidden, entity.ErrorResponse{
+				Error: "Buyer access required",
+			})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
+}
+
 // CORSMiddleware handles CORS
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {

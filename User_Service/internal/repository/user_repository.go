@@ -62,3 +62,12 @@ func (r *PostgresRepository) GetAllUsersByAdmin() ([]*entity.User, error) {
 	}
 	return users, nil
 }
+
+func (r *PostgresRepository) GetListPartner() ([]*entity.User, error) {
+	var partners []*entity.User
+	err := r.db.Where("role = ?", entity.RoleUser).Find(&partners).Error
+	if err != nil {
+		return nil, err
+	}
+	return partners, nil
+}

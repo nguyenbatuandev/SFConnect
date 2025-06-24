@@ -91,3 +91,20 @@ func (s *UserService) ToggleUserLockByAdmin(id uuid.UUID) error {
 func (s *UserService) GetAllUsersByAdmin() ([]*entity.User, error) {
 	return s.userRepo.GetAllUsersByAdmin()
 }
+
+func (s *UserService) GetListPartner() ([]*entity.PartnerRespone, error) {
+	users, err := s.userRepo.GetListPartner()
+	if err != nil {
+		return nil, err
+	}
+
+	var partners []*entity.PartnerRespone
+	for _, user := range users {
+		partners = append(partners, &entity.PartnerRespone{
+			ID:    user.ID,
+			Name:  user.Name,
+		})
+	}
+
+	return partners, nil
+}

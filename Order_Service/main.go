@@ -23,9 +23,10 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
+	callUserService := service.NewCallService()
 
 	//repo
-	orderRepository := repository.NewOrderRepository(db)
+	orderRepository := repository.NewOrderRepository(db, callUserService)
 	authService := service.NewJWTauthService(cfg.JWT.SecretKey)
 	partnerCommis := repository.NewPartnerCommissionRepository(db, orderRepository)
 	partnerCommisService := service.NewPartnerCommissionService(partnerCommis)
@@ -33,7 +34,7 @@ func main() {
 	partnerService := service.NewPartnerService(orderRepository, authService)
 	adminService := service.NewAdminService(orderRepository, authService, partnerCommisService)
 
-	buyerHandle := handle.NewBuyerHandler(authService, buyerService)
+	buyerHandle := handle.NewBuyerHandler(authService, buyerService , callUserService)
 	partnerHandle := handle.NewPartnerHandler(authService, partnerService, partnerCommisService)
 	adminHandle := handle.NewAdminHandler(authService, adminService, partnerCommisService)
 	// Initialize HTTP server
@@ -52,6 +53,7 @@ func main() {
 			buyerGroup.GET("/orders/:status", buyerHandle.GetAllOrdersByBuyerID)
 			buyerGroup.POST("/orders", buyerHandle.CreateOrder)
 			buyerGroup.PUT("/orders/:orderItemId", buyerHandle.UpdateOrderStatus)
+			buyerGroup.GET("/partners", buyerHandle.GetListPartner)
 		}
 	}
 	// Partner routes

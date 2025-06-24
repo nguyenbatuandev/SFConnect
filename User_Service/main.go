@@ -64,12 +64,17 @@ func main() {
 
         // Admin routes
         admin := router.Group("api/admin")
-        admin.Use(middleware.AuthMiddleware(authService))
+        admin.Use(middleware.AuthMiddleware(authService), middleware.AdminOnlyMiddleware())
         {
-            admin.POST("/toggle-user-lock/:id", middleware.AdminOnlyMiddleware(), userHandler.ToggleUserLockByAdmin)
-            admin.GET("/get-all-user", middleware.AdminOnlyMiddleware(), userHandler.GetAllUsersByAdmin)
+            admin.POST("/toggle-user-lock/:id", userHandler.ToggleUserLockByAdmin)
+            admin.GET("/get-all-user", userHandler.GetAllUsersByAdmin)
         }
-
+        
+        buyer := router.Group("api/buyer")
+        buyer.Use(middleware.AuthMiddleware(authService), middleware.BuyerOnlyMiddleware())
+        {
+            buyer.GET("/get-list-partner", userHandler.GetListPartner)
+        }
     }
 
     log.Printf("Server starting on port %s", cfg.ServerConfig.Port)

@@ -24,3 +24,8 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	DeletedAt time.Time `json:"deleted_at"`
 }
+
+type PartnerRespone struct {
+	ID        uuid.UUID `json:"id" `
+	Name      string    `json:"name" `
+}

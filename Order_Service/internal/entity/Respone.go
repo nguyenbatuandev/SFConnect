@@ -11,6 +11,11 @@ type ProductResponse struct {
 	Data    Product `json:"data"`
 }
 
+type GetPartnerResponseWrapper struct {
+	Message string                   `json:"message"`
+	Data    []GetPartnerResponse     `json:"data"`
+}
+
 type Product struct {
 	Id    uuid.UUID `json:"id"`
 	Name  string    `json:"name"`
@@ -43,4 +48,9 @@ type PartnerCommissionRespone struct {
 	CommissionRate float64 `json:"commission_rate"`
 	CommissionAmount float64 `json:"commission_amount"`
 	CreateTime time.Time `json:"create_time"`
+}
+
+type GetPartnerResponse struct {
+	ID        uuid.UUID `json:"id" `
+	Name      string    `json:"name" gorm:"not null"`
 }

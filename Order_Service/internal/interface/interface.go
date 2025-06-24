@@ -3,6 +3,7 @@ package _interface
 import (
 	"Order_Service/internal/entity"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
 
@@ -37,7 +38,6 @@ type OrderRepository interface {
 	CheckOwnerOrder(buyerID, orderID uuid.UUID) (bool, error)
 	GetOrderItemStatusByID(orderItemID uuid.UUID) (string, error)
 	GetOrderItemByID(orderItemID uuid.UUID) (*entity.OrderItemsRespone, error)
-	GetProductByID(productID uuid.UUID) (*entity.Product, error)
 	GetAllOrderByID(orderID uuid.UUID, status string) (*entity.Order, error)
 	GetBuyerIDByOrderItemID(orderItemID uuid.UUID) (uuid.UUID, error)
 }
@@ -57,4 +57,10 @@ type PartnerCommissionService interface {
 
 type ProductService interface {
 	GetProductByID(productID uuid.UUID) (*entity.Product, error)
+}
+
+type CallService interface {
+	GetListPartner(authHeader string) ([]entity.GetPartnerResponse, error)
+	GetProductByID(productID uuid.UUID) (*entity.Product, error)
+	PushJWT(c *fiber.Ctx) error
 }

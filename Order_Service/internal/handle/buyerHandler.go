@@ -13,12 +13,14 @@ import (
 type BuyerHandler struct {
 	authService  _interface.AuthService
 	orderService _interface.OrderServiceBuyer
+	callUserService _interface.CallService
 }
 
-func NewBuyerHandler(authService _interface.AuthService, orderService _interface.OrderServiceBuyer) *BuyerHandler {
+func NewBuyerHandler(authService _interface.AuthService, orderService _interface.OrderServiceBuyer, callUserService _interface.CallService) *BuyerHandler {
 	return &BuyerHandler{
 		authService:  authService,
 		orderService: orderService,
+		callUserService: callUserService,
 	}
 }
 
@@ -173,5 +175,19 @@ func (b *BuyerHandler) UpdateOrderStatus(c *gin.Context) {
 	c.JSON(http.StatusOK, entity.SuccessResponse{
 		Message: "Order status updated successfully",
 		Data:    order,
+	})
+}
+
+func (b *BuyerHandler) GetListPartner(c *gin.Context) {
+	// Gọi service để lấy danh sách partner
+	partners, err := b.callUserService.GetListPartner(c.GetHeader("Authorization"))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, entity.ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, entity.SuccessResponse{
+		Message: "Get list partner successfully",
+		Data:    partners,
 	})
 }

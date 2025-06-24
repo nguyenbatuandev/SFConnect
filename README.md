@@ -281,6 +281,13 @@ Authorization: Bearer <buyer-token>
 
 ```
 
+```bash
+# Lấy danh sách partner
+GET /api/buyer/partners
+Authorization: Bearer <buyer-token>
+
+```
+
 #### 🤝 Partner Endpoints
 ```bash
 # Lấy đơn hàng của partner theo trạng thái

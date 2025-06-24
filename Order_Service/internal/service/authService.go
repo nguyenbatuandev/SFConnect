@@ -62,3 +62,4 @@ func (s *JWTauthService) ValidateToken(tokenString string) (*entity.Claims, erro
 		Role:   entity.UserRole(roleStr),
 	}, nil
 }
+

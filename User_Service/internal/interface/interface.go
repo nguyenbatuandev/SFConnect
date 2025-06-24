@@ -13,6 +13,7 @@ type UserRepository interface {
 	DeleteUser(id uuid.UUID) error
 	ToggleUserLockByAdmin(id uuid.UUID, isActive bool) error
 	GetAllUsersByAdmin() ([]*entity.User, error)
+	GetListPartner() ([]*entity.User, error)
 }
 
 type AuthSerice interface {
@@ -30,6 +31,7 @@ type UserService interface {
 	DeleteUser(id uuid.UUID) error
 	ToggleUserLockByAdmin(id uuid.UUID) error
 	GetAllUsersByAdmin() ([]*entity.User, error)
+	GetListPartner() ([]*entity.PartnerRespone, error)
 }
 
 type Claims struct {

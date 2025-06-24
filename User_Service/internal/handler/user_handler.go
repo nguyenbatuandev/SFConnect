@@ -193,3 +193,16 @@ func (h *UserHandler) GetAllUsersByAdmin(c *gin.Context) {
 		Data:    users,
 	})
 }
+
+func (h *UserHandler) GetListPartner(c *gin.Context) {
+	partners, err := h.userService.GetListPartner()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, entity.ErrorResponse{Error: "Failed to retrieve partners"})
+		return
+	}
+
+	c.JSON(http.StatusOK, entity.SuccessResponse{
+		Message: "Partners retrieved successfully",
+		Data:    partners,
+	})
+}
