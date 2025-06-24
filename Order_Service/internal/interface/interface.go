@@ -19,7 +19,7 @@ type OrderServiceBuyer interface {
 
 type OrderServicePartner interface {
 	GetAllOrdersByPartnerID(partnerID uuid.UUID, status string) ([]entity.OrderItemsRespone, error)
-	UpdateOrderStatus(role entity.UserRole, orderID uuid.UUID) (*entity.OrderItemsRespone, error)
+	UpdateOrderStatus(role entity.UserRole, partnerID uuid.UUID, orderID uuid.UUID) (*entity.OrderItemsRespone, error)
 }
 
 type OrderServiceAdmin interface {
@@ -31,6 +31,7 @@ type OrderServiceAdmin interface {
 type OrderRepository interface {
 	UpdateOrderStatus(orderID uuid.UUID, status string) (*entity.OrderItemsRespone, error)
 	CheckOwnerOrder(buyerID, orderID uuid.UUID) (bool, error)
+	CheckPartnerOrder(partnerID, orderItemID uuid.UUID) (bool, error)
 	GetOrderItemStatusByID(orderItemID uuid.UUID) (string, error)
 	GetOrderItemByID(orderItemID uuid.UUID) (*entity.OrderItemsRespone, error)
 	GetAllOrderByID(orderID uuid.UUID, status string) (*entity.Order, error)

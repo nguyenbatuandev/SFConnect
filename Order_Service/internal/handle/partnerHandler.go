@@ -4,7 +4,6 @@ import (
 	"Order_Service/internal/entity"
 	_interface "Order_Service/internal/interface"
 	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -66,13 +65,26 @@ func (b *PartnerHandler) UpdateOrderStatus(c *gin.Context) {
 		return
 	}
 
+
 	role, ok := roleRaw.(entity.UserRole)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, entity.ErrorResponse{Error: "Invalid user role"})
 		return
 	}
 
-	order, err := b.orderService.UpdateOrderStatus(role, orderID)
+	userIDRaw, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, entity.ErrorResponse{Error: "User not authenticated"})
+		return
+	}
+
+	userID, ok := userIDRaw.(uuid.UUID)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, entity.ErrorResponse{Error: "Invalid user ID"})
+		return
+	}
+
+	order, err := b.orderService.UpdateOrderStatus(role, userID, orderID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, entity.ErrorResponse{Error: err.Error()})
 		return

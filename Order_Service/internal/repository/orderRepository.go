@@ -134,3 +134,19 @@ func (r *postgresRepository) GetBuyerIDByOrderItemID(orderItemID uuid.UUID) (uui
 
 	return order.BuyerID, nil
 }
+
+func (r *postgresRepository) CheckPartnerOrder(partnerID, orderItemID uuid.UUID) (bool, error) {
+	var count int64
+	err := r.db.
+		Model(&entity.OrderItems{}).
+		Where("partner_id = ? AND id = ?", partnerID, orderItemID).
+		Count(&count).Error
+
+	if err != nil {
+		return false, err
+	}
+	if count == 0 {
+		return false, errors.New("you are not the owner of this order item")
+	}
+	return true, nil
+}

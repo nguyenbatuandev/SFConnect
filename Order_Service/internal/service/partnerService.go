@@ -31,13 +31,21 @@ func (s *PartnerService) GetAllOrdersByPartnerID(partnerID uuid.UUID, status str
 	return s.partnerRepository.GetAllOrdersByPartnerID(partnerID, status)
 }
 
-func (s *PartnerService) UpdateOrderStatus(role entity.UserRole, orderItemID uuid.UUID) (*entity.OrderItemsRespone, error) {
+func (s *PartnerService) UpdateOrderStatus(role entity.UserRole, partnerID, orderItemID uuid.UUID) (*entity.OrderItemsRespone, error) {
 	if role != entity.PartnerRole {
 		return nil, errors.New("only partner can update order status")
 	}
 
 	status, err := s.orderRepository.GetOrderItemStatusByID(orderItemID)
 	if err != nil {
+		return nil, err
+	}
+	// Check if the partner is the owner of the order item
+	isOwner, err := s.orderRepository.CheckPartnerOrder(partnerID, orderItemID)
+	if err != nil {
+		return nil, err
+	}
+	if !isOwner {
 		return nil, err
 	}
 
