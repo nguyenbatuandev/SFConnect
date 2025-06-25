@@ -154,6 +154,11 @@ services:
       SERVER_PORT: 8083
       GIN_MODE: release
       JWT_SECRET: qwertyuiopiuytsdfghjkllkjhgfddfghjklkjhgfddfghjkkj
+      
+      # Call Service Configuration
+      SERVICE_USER_URL: http://user_service:8080
+      SERVICE_PRODUCT_URL: http://product_service:8082
+      SERVICE_COMMISSION_RATE: 0.1
     depends_on:
       order_db:
         condition: service_healthy

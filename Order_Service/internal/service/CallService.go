@@ -1,6 +1,7 @@
 package service
 
 import (
+	"Order_Service/internal/config"
 	"Order_Service/internal/entity"
 	"encoding/json"
 	"fmt"
@@ -14,15 +15,16 @@ import (
 )
 
 type CallService struct {
+	cfg *config.Config
 }
 
-func NewCallService() *CallService {
-	return &CallService{}
+func NewCallService(cfg *config.Config) *CallService {
+	return &CallService{cfg: cfg}
 }
 
 func (s *CallService) GetListPartner(authHeader string) ([]entity.GetPartnerResponse, error) {
 	client := &http.Client{Timeout: 5 * time.Second}
-	req, err := http.NewRequest("GET", "http://user_service:8080/api/buyer/get-list-partner", nil)
+	req, err := http.NewRequest("GET", s.cfg.CallService.UserServiceURL+"/api/buyer/get-list-partner", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +68,7 @@ func (s *CallService) PushJWT(c *fiber.Ctx) error {
 
 func (r *CallService) GetProductByID(productID uuid.UUID) (*entity.Product, error) {
 	// Xây dựng URL
-	url := fmt.Sprintf("http://product_service:8082/api/v1/product-id/%s", productID.String())
+	url := fmt.Sprintf("%s/api/v1/product-id/%s", r.cfg.CallService.ProductServiceURL, productID.String())
 
 	// Tạo HTTP GET request
 	req, err := http.NewRequest("GET", url, nil)

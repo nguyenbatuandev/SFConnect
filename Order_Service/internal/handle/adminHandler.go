@@ -87,7 +87,7 @@ func (a *AdminHandler) GetCommissionByOrderItemID(c *gin.Context) {
 }
 
 func (a *AdminHandler) GetCommissionByPartnerID(c *gin.Context) {
-	orderItemIDRaw := c.Param("patrnerId")
+	orderItemIDRaw := c.Param("partnerId")
 
 	orderItemID, err := uuid.Parse(orderItemIDRaw)
 	if err != nil {

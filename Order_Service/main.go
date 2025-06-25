@@ -23,7 +23,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
-	callUserService := service.NewCallService()
+	callUserService := service.NewCallService(cfg)
 
 	//repo
 	orderRepository := repository.NewOrderRepository(db, callUserService)
@@ -79,7 +79,7 @@ func main() {
 			adminGroup.GET("/all-orders", adminHandle.GetAllOrders)
 			adminGroup.GET("/orders/:orderId", adminHandle.GetOrderByID)
 			adminGroup.GET("/commission/:orderItemId", adminHandle.GetCommissionByOrderItemID)
-			adminGroup.GET("/commission-pnid/:patrnerId", adminHandle.GetCommissionByPartnerID)
+			adminGroup.GET("/commission-pnid/:partnerId", adminHandle.GetCommissionByPartnerID)
 		}
 	}
 

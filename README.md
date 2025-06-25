@@ -276,7 +276,7 @@ Authorization: Bearer <buyer-token>
 
 ```bash
 # Cập nhật trạng thái đơn hàng (Buyer cancel)
-PUT /api/buyer/orders/{orderItemId}
+PUT /api/buyer/orders/status?status={orderItemId}
 Authorization: Bearer <buyer-token>
 
 ```

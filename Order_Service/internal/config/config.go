@@ -2,9 +2,11 @@ package config
 
 import (
 	"fmt"
-	"github.com/joho/godotenv"
 	"log"
 	"os"
+	"strconv"
+
+	"github.com/joho/godotenv"
 )
 
 type DatabaseConfig struct {
@@ -24,16 +26,30 @@ type JWTConfig struct {
 	SecretKey string
 }
 
+type CallServiceConfig struct {
+	UserServiceURL    string
+	ProductServiceURL string
+	CommissionRate    float64
+}
+
 type Config struct {
-	Database DatabaseConfig
-	Server   ServerConfig
-	JWT      JWTConfig
+	Database    DatabaseConfig
+	Server      ServerConfig
+	JWT         JWTConfig
+	CallService CallServiceConfig
 }
 
 func NewConfig() (*Config, error) {
 	if err := godotenv.Load(); err != nil {
 		log.Println("Error loading .env file")
 	}
+
+	commissionRateStr := os.Getenv("SERVICE_COMMISSION_RATE")
+	commissionRate, err := strconv.ParseFloat(commissionRateStr, 64)
+	if err != nil {
+		return nil, fmt.Errorf("invalid SERVICE_COMMISSION_RATE: %v", err)
+	}
+
 	config := &Config{
 		Database: DatabaseConfig{
 			Host:         os.Getenv("DB_HOST"),
@@ -49,6 +65,10 @@ func NewConfig() (*Config, error) {
 		},
 		JWT: JWTConfig{
 			SecretKey: os.Getenv("JWT_SECRET"),
+		}, CallService: CallServiceConfig{
+			UserServiceURL:    os.Getenv("SERVICE_USER_URL"),
+			ProductServiceURL: os.Getenv("SERVICE_PRODUCT_URL"),
+			CommissionRate:    commissionRate,
 		},
 	}
 	return config, nil
