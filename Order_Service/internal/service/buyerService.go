@@ -76,7 +76,7 @@ func (s *BuyerService) UpdateOrderStatus(role entity.UserRole, buyerID, orderIte
 			PartnerID:        order.PartnerID,
 			OrderItems:       orderItemID,
 			CommissionRate:   commissionRate,
-			CommissionAmount: order.Price * commissionRate,
+			CommissionAmount: order.Price * commissionRate * float64(order.Quantity),
 			CreateTime:       time.Now(),
 		}
 
